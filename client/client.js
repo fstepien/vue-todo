@@ -2,7 +2,7 @@ const server = io({ transports: ["websocket"], upgrade: false });
 // const server = io.connect("http://localhost:3003/");
 
 const app = new Vue({
-  el: "#app",
+  el: "#main",
   data: {
     input: "",
     todos: []
@@ -13,6 +13,7 @@ const app = new Vue({
   created() {
     this.listenForSocketEvents();
     this.$on("checkbox-toggle", id => this.handleCheckboxToggle(id));
+    this.$on("delete-todo", id => this.deleteTodoUsingId(id));
   },
   methods: {
     listenForSocketEvents() {
@@ -36,10 +37,20 @@ const app = new Vue({
       this.input = "";
     },
     handleCheckboxToggle(id) {
-      console.log("toggle", id);
       server.emit("toggle completed", {
         id
       });
+    },
+    deleteTodoUsingId(id) {
+      server.emit("delete todo", {
+        id
+      });
+    },
+    completeAll() {
+      server.emit("complete all");
+    },
+    deleteAll() {
+      server.emit("delete all");
     }
   }
 });

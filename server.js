@@ -12,7 +12,7 @@ const server = app.listen(3003, () =>
 );
 app.use(express.static(__dirname + "/client"));
 
-const DB = firstTodos.map(t => {
+let DB = firstTodos.map(t => {
   // Form new Todo ojects
   return new Todo((title = t.title));
 });
@@ -41,9 +41,21 @@ io.on("connection", client => {
   //toggles completed key based on todo id
   client.on("toggle completed", payload => {
     let todoIndex = DB.findIndex(todo => todo.id === payload.id);
-    console.log("before", DB[todoIndex]);
     DB[todoIndex].completed = !DB[todoIndex].completed;
-    console.log("after", DB[todoIndex]);
+    reloadTodos();
+  });
+  //delete todo with received id
+  client.on("delete todo", payload => {
+    let todoIndex = DB.findIndex(todo => todo.id === payload.id);
+    DB.splice(todoIndex, 1);
+    reloadTodos();
+  });
+  client.on("complete all", () => {
+    DB.forEach(todo => (todo.completed = true));
+    reloadTodos();
+  });
+  client.on("delete all", () => {
+    DB = [];
     reloadTodos();
   });
 

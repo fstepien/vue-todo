@@ -8,9 +8,16 @@
 </head>
 
 <body>
-    <div id="app">
-        <input v-model="input" type="text" placeholder="Feed the cat" autofocus>
-        <button type="button" @click="add">Make</button>
+    <div id="main">
+        <div class="main__form">
+
+            <input v-model="input" type="text" placeholder="Feed the cat" autofocus>
+            <button type="button" @click="add">Make</button>
+        </div>
+        <div class="main__controls">
+            <button @click="completeAll">COMPLETE ALL</button>
+            <button @click="deleteAll">DELETE ALL</button>
+        </div>
         <todo-list v-for="todo in todos" :todo="todo" :key="todo.id">
         </todo-list>
     </div>
