@@ -7,20 +7,23 @@ const server = require("socket.io")(http);
 const firstTodos = require("./data");
 const Todo = require("./todo");
 
+//START EXPRESS SERVER ON PORT 3003
+app.listen(3003, () => console.log("Waiting for clients to connect"));
 //ADD GET REQUEST WHEN SERVER IS RUN
-app.listen(4000);
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
-});
+app.use(express.static(__dirname + "/client"));
+// app.get("/", (req, res) => {
+//   res.sendFile(__dirname + "/client");
+// });
 
 server.on("connection", client => {
+  console.log("client connected to sockets");
   // This is going to be our fake 'database' for this application
   // Parse all default Todo's from db
 
   // FIXME: DB is reloading on client refresh. It should be persistent on new client
   // connections from the last time the server was run...
   const DB = firstTodos.map(t => {
-    // Form new Todo objects
+    // Form new Todo ojects
     return new Todo((title = t.title));
   });
 
@@ -46,7 +49,6 @@ server.on("connection", client => {
   reloadTodos();
 });
 
-console.log("Waiting for clients to connect");
-server.listen(3003);
+// server.listen(3003);
 // CHANGED server.listen() to app.listen()
 // app.listen(3003);
