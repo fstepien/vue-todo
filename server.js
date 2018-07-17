@@ -16,6 +16,7 @@ app.use(express.static(__dirname + "/client"));
 const io = socket(server);
 connections = [];
 io.on("connection", client => {
+  console.log("client connected", client.id);
   connections.push(client);
   // FIXME: DB is reloading on client refresh. It should be persistent on new client connections from the last time the server was run...
 
@@ -26,7 +27,7 @@ io.on("connection", client => {
 
   // Sends a message to the client to reload all todos
   const reloadTodos = () => {
-    io.emit("load", DB);
+    io.emit("load", { todos: DB, id: client.id });
   };
 
   // Accepts when a client makes a new todo

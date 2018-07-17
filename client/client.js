@@ -1,4 +1,6 @@
-const server = io.connect("http://localhost:3003/");
+// const server = io.connect("http://localhost:3003/");
+const server = io({ transports: ["websocket"], upgrade: false });
+console.log(server);
 const list = document.getElementById("todo-list");
 
 // NOTE: These are all our globally scoped functions for interacting with the server
@@ -29,8 +31,8 @@ function render(todo) {
 
 // NOTE: These are listeners for events from the server
 // This event is for (re)loading the entire list of todos from the server
-server.on("load", todos => {
-  todos.forEach(todo => render(todo));
+server.on("load", ({ todos, id }) => {
+  server.id === id && todos.forEach(todo => render(todo));
 });
 
 server.on("render_newTodo", todo => {
