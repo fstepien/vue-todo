@@ -1,39 +1,52 @@
-const server = require('socket.io')();
-const firstTodos = require('./data');
-const Todo = require('./todo');
+//ADD EXPRESS THAT IS INSTALLED BUT NOT USED as per docs: https://socket.io/get-started/chat/
+const express = require("express");
+const app = express();
+const http = require("http").Server(app);
 
-server.on('connection', (client) => {
-    // This is going to be our fake 'database' for this application
-    // Parse all default Todo's from db
+const server = require("socket.io")(http);
+// const client = require("./client");
+const firstTodos = require("./data");
+const Todo = require("./todo");
 
-    // FIXME: DB is reloading on client refresh. It should be persistent on new client
-    // connections from the last time the server was run...
-    const DB = firstTodos.map((t) => {
-        // Form new Todo objects
-        return new Todo(title=t.title);
-    });
+//add middleware to serve static file
+app.use(express.static("/index.html"));
 
-    // Sends a message to the client to reload all todos
-    const reloadTodos = () => {
-        server.emit('load', DB);
-    }
+// app.get("/", (req, res) => {
+//   res.sendFile(__dirname + "/index.html");
+// });
 
-    // Accepts when a client makes a new todo
-    client.on('make', (t) => {
-        // Make a new todo
-        const newTodo = new Todo(title=t.title);
+server.on("connection", client => {
+  // This is going to be our fake 'database' for this application
+  // Parse all default Todo's from db
 
-        // Push this newly created todo to our database
-        DB.push(newTodo);
+  // FIXME: DB is reloading on client refresh. It should be persistent on new client
+  // connections from the last time the server was run...
+  const DB = firstTodos.map(t => {
+    // Form new Todo objects
+    return new Todo((title = t.title));
+  });
 
-        // Send the latest todos to the client
-        // FIXME: This sends all todos every time, could this be more efficient?
-        reloadTodos();
-    });
+  // Sends a message to the client to reload all todos
+  const reloadTodos = () => {
+    server.emit("load", DB);
+  };
 
-    // Send the DB downstream on connect
+  // Accepts when a client makes a new todo
+  client.on("make", t => {
+    // Make a new todo
+    const newTodo = new Todo((title = t.title));
+
+    // Push this newly created todo to our database
+    DB.push(newTodo);
+
+    // Send the latest todos to the client
+    // FIXME: This sends all todos every time, could this be more efficient?
     reloadTodos();
+  });
+
+  // Send the DB downstream on connect
+  reloadTodos();
 });
 
-console.log('Waiting for clients to connect');
+console.log("Waiting for clients to connect");
 server.listen(3003);
