@@ -4,16 +4,14 @@ const app = express();
 const http = require("http").Server(app);
 
 const server = require("socket.io")(http);
-// const client = require("./client");
 const firstTodos = require("./data");
 const Todo = require("./todo");
 
-//add middleware to serve static file
-app.use(express.static("/index.html"));
-
-// app.get("/", (req, res) => {
-//   res.sendFile(__dirname + "/index.html");
-// });
+//ADD GET REQUEST WHEN SERVER IS RUN
+app.listen(4000);
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
 
 server.on("connection", client => {
   // This is going to be our fake 'database' for this application
@@ -50,3 +48,5 @@ server.on("connection", client => {
 
 console.log("Waiting for clients to connect");
 server.listen(3003);
+// CHANGED server.listen() to app.listen()
+// app.listen(3003);
