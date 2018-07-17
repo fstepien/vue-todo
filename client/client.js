@@ -1,4 +1,4 @@
-const server = io.connect({ transports: ["websocket"], upgrade: false });
+const server = io.connect("http://localhost:3003/");
 const list = document.getElementById("todo-list");
 
 // NOTE: These are all our globally scoped functions for interacting with the server
