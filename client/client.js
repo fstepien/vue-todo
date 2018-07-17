@@ -1,17 +1,9 @@
-// const server = io.connect("http://localhost:3003/");
 const server = io({ transports: ["websocket"], upgrade: false });
-console.log(server);
-const list = document.getElementById("todo-list");
 
-// NOTE: These are all our globally scoped functions for interacting with the server
-// This function adds a new todo from the input
 function add() {
   // console.warn(event);
   const input = document.getElementById("todo-input");
-  if (input.value === "") {
-    alert("Please enter a TODO");
-    return null;
-  }
+
   // Emit the new todo as some data to the server
   server.emit("make", {
     title: input.value
@@ -31,10 +23,40 @@ function render(todo) {
 
 // NOTE: These are listeners for events from the server
 // This event is for (re)loading the entire list of todos from the server
-server.on("load", ({ todos, id }) => {
-  server.id === id && todos.forEach(todo => render(todo));
-});
 
-server.on("render_newTodo", todo => {
-  render(todo);
+// server.on("render_newTodo", todo => {
+//   render(todo);
+// });
+
+const app = new Vue({
+  el: "#app",
+  data: {
+    input: "",
+    todos: []
+  },
+  components: {
+    TodoList
+  },
+  created() {
+    this.loadTodos();
+  },
+  methods: {
+    loadTodos() {
+      console.log(server);
+      server.on("load", ({ todos, id }) => {
+        this.todos = todos;
+      });
+    },
+    add() {
+      if (this.input === "") {
+        alert("Please enter a TODO");
+        return null;
+      }
+      console.log("add todo");
+      server.emit("make", {
+        title: this.input
+      });
+      this.input = "";
+    }
+  }
 });

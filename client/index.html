@@ -8,9 +8,14 @@
 </head>
 
 <body>
-    <input id="todo-input" type="text" placeholder="Feed the cat" autofocus required>
-    <button type="button" onclick="add()">Make</button>
-    <ul id="todo-list"></ul>
+    <div id="app">
+        <input v-model="input" type="text" placeholder="Feed the cat" autofocus>
+        <button type="button" @click="add">Make</button>
+        <todo-list v-for="todo in todos" :todo="todo" :key="todo.id">
+        </todo-list>
+    </div>
+    <script type=" text/javascript " src="https://unpkg.com/vue@2.5.16/dist/vue.js "></script>
+    <script src="/components/TodoList.js"></script>
     <script src="/client.js"></script>
 </body>
 

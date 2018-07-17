@@ -12,18 +12,17 @@ const server = app.listen(3003, () =>
 );
 app.use(express.static(__dirname + "/client"));
 
+const DB = firstTodos.map(t => {
+  // Form new Todo ojects
+  return new Todo((title = t.title));
+});
+
 //set up sockets on server side + listen to connection
 const io = socket(server);
-connections = [];
 io.on("connection", client => {
   console.log("client connected", client.id);
-  connections.push(client);
-  // FIXME: DB is reloading on client refresh. It should be persistent on new client connections from the last time the server was run...
 
-  const DB = firstTodos.map(t => {
-    // Form new Todo ojects
-    return new Todo((title = t.title));
-  });
+  // FIXME: DB is reloading on client refresh. It should be persistent on new client connections from the last time the server was run...
 
   // Sends a message to the client to reload all todos
   const reloadTodos = () => {
@@ -42,5 +41,5 @@ io.on("connection", client => {
 
   // Send the DB downstream on connect ONLY if new client
 
-  connections.includes(client) && reloadTodos();
+  reloadTodos();
 });
