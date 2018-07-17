@@ -3,19 +3,18 @@ const express = require("express");
 const app = express();
 const http = require("http").Server(app);
 
-const server = require("socket.io")(http);
 const firstTodos = require("./data");
 const Todo = require("./todo");
 
 //START EXPRESS SERVER ON PORT 3003
-app.listen(3003, () => console.log("Waiting for clients to connect"));
-//ADD GET REQUEST WHEN SERVER IS RUN
+const server = app.listen(3003, () =>
+  console.log("Waiting for clients to connect")
+);
+//serve static files from new client folter through express middleware
 app.use(express.static(__dirname + "/client"));
-// app.get("/", (req, res) => {
-//   res.sendFile(__dirname + "/client");
-// });
-
-server.on("connection", client => {
+//set up sockets on server side
+const io = require("socket.io")(server);
+io.on("connection", client => {
   console.log("client connected to sockets");
   // This is going to be our fake 'database' for this application
   // Parse all default Todo's from db
