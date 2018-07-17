@@ -38,6 +38,14 @@ io.on("connection", client => {
     // Send todo to clients
     io.emit("render_newTodo", newTodo);
   });
+  //toggles completed key based on todo id
+  client.on("toggle completed", payload => {
+    let todoIndex = DB.findIndex(todo => todo.id === payload.id);
+    console.log("before", DB[todoIndex]);
+    DB[todoIndex].completed = !DB[todoIndex].completed;
+    console.log("after", DB[todoIndex]);
+    reloadTodos();
+  });
 
   // Send the DB downstream on connect ONLY if new client
 

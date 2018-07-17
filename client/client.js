@@ -11,10 +11,11 @@ const app = new Vue({
     TodoList
   },
   created() {
-    this.loadTodos();
+    this.listenForSocketEvents();
+    this.$on("checkbox-toggle", id => this.handleCheckboxToggle(id));
   },
   methods: {
-    loadTodos() {
+    listenForSocketEvents() {
       console.log(server);
       server.on("load", ({ todos, id }) => {
         this.todos = todos;
@@ -33,6 +34,12 @@ const app = new Vue({
         title: this.input
       });
       this.input = "";
+    },
+    handleCheckboxToggle(id) {
+      console.log("toggle", id);
+      server.emit("toggle completed", {
+        id
+      });
     }
   }
 });
