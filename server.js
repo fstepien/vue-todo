@@ -1,21 +1,21 @@
-//ADD EXPRESS THAT IS INSTALLED BUT NOT USED as per docs: https://socket.io/get-started/chat/
 const express = require("express");
-const app = express();
-const http = require("http").Server(app);
+const socket = require("socket.io");
 
 const firstTodos = require("./data");
 const Todo = require("./todo");
 
-//START EXPRESS SERVER ON PORT 3003
+//Start express server on port 3003 + serve static files from new client folter through express middleware
+const app = express();
+const http = require("http").Server(app);
 const server = app.listen(3003, () =>
   console.log("Waiting for clients to connect")
 );
-//serve static files from new client folter through express middleware
 app.use(express.static(__dirname + "/client"));
-//set up sockets on server side
-const io = require("socket.io")(server);
+
+//set up sockets on server side + listen to connection
+const io = socket(server);
 io.on("connection", client => {
-  console.log("client connected to sockets");
+  console.log("client connected to sockets", client.id);
   // This is going to be our fake 'database' for this application
   // Parse all default Todo's from db
 
