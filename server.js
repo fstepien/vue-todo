@@ -26,7 +26,7 @@ io.on("connection", client => {
 
   // Sends a message to the client to reload all todos
   const reloadTodos = () => {
-    io.emit("load", { todos: DB, id: client.id });
+    io.emit("load", DB);
   };
 
   // Create New Todo

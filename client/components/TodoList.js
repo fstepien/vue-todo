@@ -3,6 +3,9 @@ const TodoList = Vue.component("todo-list", {
     todo: {
       type: Object,
       required: true
+    },
+    completed: {
+      type: Boolean
     }
   },
   methods: {
@@ -16,9 +19,15 @@ const TodoList = Vue.component("todo-list", {
   },
   template: `
   <div className="todo">
-  <input type="checkbox" :checked="todo.completed" @click="handleCheckboxToggle"/>
+  <input 
+    type="checkbox" 
+    :checked="todo.completed" 
+    @click="handleCheckboxToggle" 
+    :disabled="!completed"/>
   {{todo.title}}
-  <button @click="deleteTodo">DELETE</button>
+  <button 
+    @click="deleteTodo" 
+    :disabled="!completed">DELETE</button>
   </div>
   `
 });

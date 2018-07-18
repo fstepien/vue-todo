@@ -10,20 +10,19 @@
 <body>
     <div id="main">
         <div class="main__form">
-
-            <input v-model="input" type="text" placeholder="Feed the cat" autofocus>
-            <button type="button" @click="add">Make</button>
+            <input v-model="input" type="text" placeholder="Feed the cat" autofocus/>
+            <button type="button" @click="add" :disabled="!connected">Make</button>
         </div>
         <div class="main__controls">
             <button @click="completeAll">COMPLETE ALL</button>
             <button @click="deleteAll">DELETE ALL</button>
         </div>
-        <todo-list v-for="todo in todos" :todo="todo" :key="todo.id">
+        <todo-list v-for="todo in todos" :todo="todo" :key="todo.id" :connected="connected">
         </todo-list>
     </div>
     <script type=" text/javascript " src="https://unpkg.com/vue@2.5.16/dist/vue.js "></script>
-    <script type=" text/javascript " src="/components/TodoList.js"></script>
-    <script type=" text/javascript " src="/client.js"></script>
+    <script type=" text/javascript " src="./components/TodoList.js"></script>
+    <script type=" text/javascript " src="./client.js"></script>
 </body>
 
 </html>

@@ -1,11 +1,11 @@
-// const server = io({ transports: ["websocket"], upgrade: false });
 const server = io.connect("http://localhost:3003/");
 
 const app = new Vue({
   el: "#main",
   data: {
     input: "",
-    todos: []
+    todos: [],
+    connected: false
   },
   components: {
     TodoList
@@ -16,13 +16,16 @@ const app = new Vue({
     this.$on("delete-todo", id => this.deleteTodoUsingId(id));
   },
   updated() {
-    this.checkLocalStorage();
+    this.connected = server.connected;
+    this.updateLocalStorage();
   },
   methods: {
     listenForSocketEvents() {
       console.log(server);
-      server.on("load", ({ todos, id }) => {
+      this.connected = server.connected;
+      server.on("load", todos => {
         this.todos = todos;
+        this.updateLocalStorage();
       });
       server.on("render_newTodo", todo => {
         this.todos.push(todo);
@@ -55,16 +58,15 @@ const app = new Vue({
       confirm("Do you want to DELETE ALL todo items?") &&
         server.emit("delete all");
     },
-    checkLocalStorage() {
-      localStorage.getItem("todos") === null
-        ? this.addTodosToLocalStorage()
-        : this.consolidateTodosWithLocalStorage();
-    },
-    addTodosToLocalStorage() {
+    updateLocalStorage() {
       localStorage.setItem("todos", JSON.stringify(this.todos));
     },
-    consolidateTodosWithLocalStorage() {
-      console.log("need to consolidate with local storage");
+    useLocalStorageIfDisconnected() {
+      let localTodos = JSON.parse(localStorage.getItem("todos"));
+      !this.connected && (this.todos = localTodos);
     }
+  },
+  mounted() {
+    this.useLocalStorageIfDisconnected();
   }
 });
