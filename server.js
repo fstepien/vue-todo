@@ -8,7 +8,9 @@ const Todo = require("./todo");
 const app = express();
 const http = require("http").Server(app);
 const server = app.listen(3003, () =>
-  console.log("Waiting for clients to connect")
+  console.log(
+    "Waiting for clients to connect at '\x1b[36mhttp://localhost:3003\x1b[0m'"
+  )
 );
 app.use(express.static(__dirname + "/client"));
 

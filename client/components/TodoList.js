@@ -4,7 +4,7 @@ const TodoList = Vue.component("todo-list", {
       type: Object,
       required: true
     },
-    completed: {
+    connected: {
       type: Boolean
     }
   },
@@ -23,11 +23,11 @@ const TodoList = Vue.component("todo-list", {
     type="checkbox" 
     :checked="todo.completed" 
     @click="handleCheckboxToggle" 
-    :disabled="!completed"/>
+    :disabled="!connected"/>
   {{todo.title}}
   <button 
     @click="deleteTodo" 
-    :disabled="!completed">DELETE</button>
+    :disabled="!connected">DELETE</button>
   </div>
   `
 });
