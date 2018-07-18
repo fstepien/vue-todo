@@ -4,7 +4,7 @@ const socket = require("socket.io");
 const firstTodos = require("./data");
 const Todo = require("./todo");
 
-//Start express server on port 3003 + serve static files from new client folter through express middleware
+//Start express server on port 3003 + serve static files from new client folder through express middleware
 const app = express();
 const http = require("http").Server(app);
 const server = app.listen(3003, () =>
@@ -15,7 +15,7 @@ const server = app.listen(3003, () =>
 app.use(express.static(__dirname + "/client"));
 
 let DB = firstTodos.map(t => {
-  // Form new Todo ojects
+  // add new Todo objects with unique ID and completed set to false
   return new Todo((title = t.title));
 });
 
@@ -24,14 +24,12 @@ const io = socket(server);
 io.on("connection", client => {
   console.log("client connected", client.id);
 
-  // FIXME: DB is reloading on client refresh. It should be persistent on new client connections from the last time the server was run...
-
   // Sends a message to the client to reload all todos
   const reloadTodos = () => {
     io.emit("load", DB);
   };
 
-  // Create New Todo
+  // Create New Todo when recives "make" from client
   client.on("make", t => {
     //1. Make new Todo 2. add to DB array 3. send the created todo to client
     const newTodo = new Todo((title = t.title));
@@ -61,9 +59,6 @@ io.on("connection", client => {
   client.on("delete all", () => {
     DB = [];
     reloadTodos();
-  });
-  client.on("destroyed", () => {
-    console.log("destroyed component");
   });
 
   reloadTodos();

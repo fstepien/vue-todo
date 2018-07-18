@@ -5,20 +5,33 @@
     <meta charset="utf-8">
     <title>TODO</title>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
 </head>
 
 <body>
-    <div id="main">
-        <div class="main__form">
-            <input v-model="input" type="text" placeholder="Feed the cat" autofocus/>
-            <button type="button" @click="add" :disabled="!connected">Make</button>
-        </div>
-        <div class="main__controls">
-            <button @click="completeAll">COMPLETE ALL</button>
-            <button @click="deleteAll">DELETE ALL</button>
-        </div>
-        <todo-list v-for="todo in todos" :todo="todo" :key="todo.id" :connected="connected">
-        </todo-list>
+    <div id="app">
+        <header>
+            <div class="wrapper header__wrapper">
+
+                <form class="header__addtodo" @submit.prevent="add" :disabled="!connected">
+                    <label for="todo-input" class="visuallyhidden">Add Todo:</label>
+                    <input v-model="input" type="text" placeholder="Feed the cat" name="todo-input" id="todo-input" autofocus :disabled="!connected"
+                    />
+                    <input type="button" @click="add" :disabled="!connected" value="Add Todo" />
+                </form>
+                <div class="header__controls">
+                    <button @click="completeAll">COMPLETE ALL</button>
+                    <button @click="deleteAll">DELETE ALL</button>
+                </div>
+            </div>
+        </header>
+        <main class="main clearfix">
+            <div class="wrapper todo__wrapper">
+                <todo-list v-for="todo in todos" :todo="todo" :key="todo.id" :connected="connected">
+                </todo-list>
+            </div>
+        </main>
     </div>
     <script type=" text/javascript " src="https://unpkg.com/vue@2.5.16/dist/vue.js "></script>
     <script type=" text/javascript " src="./components/TodoList.js"></script>

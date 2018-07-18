@@ -8,6 +8,16 @@ const TodoList = Vue.component("todo-list", {
       type: Boolean
     }
   },
+  computed: {
+    completedText() {
+      return this.todo.completed ? "REDO" : "COMPLETE";
+    },
+    addCompletedClass() {
+      return {
+        "completed-class": this.todo.completed
+      };
+    }
+  },
   methods: {
     handleCheckboxToggle() {
       this.$root.$emit("checkbox-toggle", this.todo.id);
@@ -18,16 +28,23 @@ const TodoList = Vue.component("todo-list", {
     }
   },
   template: `
-  <div className="todo">
-  <input 
-    type="checkbox" 
-    :checked="todo.completed" 
-    @click="handleCheckboxToggle" 
-    :disabled="!connected"/>
-  {{todo.title}}
-  <button 
-    @click="deleteTodo" 
-    :disabled="!connected">DELETE</button>
+  <div class="todo" :class="addCompletedClass">
+    <div class="todo__text">
+        {{todo.title}}
+    </div>
+    <div class="todo__btns">
+
+        <button
+     
+        :checked="todo.completed" 
+        @click="handleCheckboxToggle" 
+        :disabled="!connected">{{completedText}} </button>
+
+        <button 
+        @click="deleteTodo" 
+        :disabled="!connected">DELETE</button>
+
+    </div>
   </div>
   `
 });

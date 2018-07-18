@@ -1,7 +1,7 @@
 const server = io.connect("http://localhost:3003/");
 
 const app = new Vue({
-  el: "#main",
+  el: "#app",
   data: {
     input: "",
     todos: [],
@@ -32,6 +32,7 @@ const app = new Vue({
       });
     },
     add() {
+      //adds new todo item by sending "make" to server
       if (this.input.replace(/\s/g, "") === "") {
         alert("Please enter a TODO");
         return null;
