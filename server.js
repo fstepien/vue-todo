@@ -29,37 +29,40 @@ io.on("connection", client => {
     io.emit("load", { todos: DB, id: client.id });
   };
 
-  // Accepts when a client makes a new todo
+  // Create New Todo
   client.on("make", t => {
-    // Make a new todo
+    //1. Make new Todo 2. add to DB array 3. send the created todo to client
     const newTodo = new Todo((title = t.title));
-    // Push this newly created todo to our database
     DB.push(newTodo);
-    // Send todo to clients
     io.emit("render_newTodo", newTodo);
   });
+
   //toggles completed key based on todo id
   client.on("toggle completed", payload => {
     let todoIndex = DB.findIndex(todo => todo.id === payload.id);
     DB[todoIndex].completed = !DB[todoIndex].completed;
     reloadTodos();
   });
+
   //delete todo with received id
   client.on("delete todo", payload => {
     let todoIndex = DB.findIndex(todo => todo.id === payload.id);
     DB.splice(todoIndex, 1);
     reloadTodos();
   });
+
   client.on("complete all", () => {
     DB.forEach(todo => (todo.completed = true));
     reloadTodos();
   });
+
   client.on("delete all", () => {
     DB = [];
     reloadTodos();
   });
-
-  // Send the DB downstream on connect ONLY if new client
+  client.on("destroyed", () => {
+    console.log("destroyed component");
+  });
 
   reloadTodos();
 });

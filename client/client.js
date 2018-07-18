@@ -1,5 +1,5 @@
-const server = io({ transports: ["websocket"], upgrade: false });
-// const server = io.connect("http://localhost:3003/");
+// const server = io({ transports: ["websocket"], upgrade: false });
+const server = io.connect("http://localhost:3003/");
 
 const app = new Vue({
   el: "#main",
@@ -15,6 +15,9 @@ const app = new Vue({
     this.$on("checkbox-toggle", id => this.handleCheckboxToggle(id));
     this.$on("delete-todo", id => this.deleteTodoUsingId(id));
   },
+  updated() {
+    this.checkLocalStorage();
+  },
   methods: {
     listenForSocketEvents() {
       console.log(server);
@@ -26,11 +29,10 @@ const app = new Vue({
       });
     },
     add() {
-      if (this.input === "") {
+      if (this.input.replace(/\s/g, "") === "") {
         alert("Please enter a TODO");
         return null;
       }
-      console.log("add todo");
       server.emit("make", {
         title: this.input
       });
@@ -50,7 +52,19 @@ const app = new Vue({
       server.emit("complete all");
     },
     deleteAll() {
-      server.emit("delete all");
+      confirm("Do you want to DELETE ALL todo items?") &&
+        server.emit("delete all");
+    },
+    checkLocalStorage() {
+      localStorage.getItem("todos") === null
+        ? this.addTodosToLocalStorage()
+        : this.consolidateTodosWithLocalStorage();
+    },
+    addTodosToLocalStorage() {
+      localStorage.setItem("todos", JSON.stringify(this.todos));
+    },
+    consolidateTodosWithLocalStorage() {
+      console.log("need to consolidate with local storage");
     }
   }
 });
