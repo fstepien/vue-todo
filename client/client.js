@@ -4,13 +4,44 @@ const app = new Vue({
   el: "#app",
   data: {
     input: "",
-    todos: [],
+
+    todos: [
+      {
+        title: "Make Coffee",
+        completed: false,
+        id: "1",
+        children: [
+          {
+            title: "Grind Beans",
+            completed: false,
+            id: "10"
+          },
+          {
+            title: "Boil Water",
+            completed: false,
+            id: "11"
+          },
+          {
+            title: "Add Beans and Water to French Press",
+            completed: false,
+            id: "12"
+          },
+          {
+            title: "Wait 5 min",
+            completed: false,
+            id: "13"
+          }
+        ]
+      }
+    ],
+
     connected: false
   },
   components: {
     TodoList
   },
   created() {
+    console.log(JSON.parse(localStorage.getItem("todos")));
     this.listenForSocketEvents();
     this.$on("checkbox-toggle", id => this.handleCheckboxToggle(id));
     this.$on("delete-todo", id => this.deleteTodoUsingId(id));
@@ -23,10 +54,10 @@ const app = new Vue({
     listenForSocketEvents() {
       console.log(server);
       this.connected = server.connected;
-      server.on("load", todos => {
-        this.todos = todos;
-        this.updateLocalStorage();
-      });
+      // server.on("load", todos => {
+      //   this.todos = todos;
+      //   this.updateLocalStorage();
+      // });
       server.on("render_newTodo", todo => {
         this.todos.push(todo);
       });
@@ -61,13 +92,13 @@ const app = new Vue({
     },
     updateLocalStorage() {
       localStorage.setItem("todos", JSON.stringify(this.todos));
-    },
-    useLocalStorageIfDisconnected() {
-      let localTodos = JSON.parse(localStorage.getItem("todos"));
-      !this.connected && (this.todos = localTodos);
     }
-  },
-  mounted() {
-    this.useLocalStorageIfDisconnected();
+    // useLocalStorageIfDisconnected() {
+    //   let localTodos = JSON.parse(localStorage.getItem("todos"));
+    //   !this.connected && (this.todos = localTodos);
+    // }
   }
+  // mounted() {
+  //   this.useLocalStorageIfDisconnected();
+  // }
 });

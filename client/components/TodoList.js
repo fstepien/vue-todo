@@ -8,6 +8,9 @@ const TodoList = Vue.component("todo-list", {
       type: Boolean
     }
   },
+  components: {
+    ChildList
+  },
   computed: {
     completedText() {
       return this.todo.completed ? "REDO" : "COMPLETE";
@@ -32,6 +35,7 @@ const TodoList = Vue.component("todo-list", {
     <div class="todo__text">
         {{todo.title}}
     </div>
+    <child-list v-for="child in todo.children" :child="child" :key="child.id" />
     <div class="todo__btns">
 
         <button
